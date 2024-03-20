@@ -23,7 +23,10 @@ RUN update-alternatives --install /usr/bin/cc cc /usr/bin/clang-9 100 && \
 RUN ln -s /usr/bin/clang-9 /usr/bin/clang-6.0
 RUN ln -s /usr/bin/llc-9 /usr/bin/llc-6.0
 
-USER ns3dce
+# VOLUME /home/ns3dce/pquic
+# RUN mkdir -p /home/ns3dce/pquic && chown ns3dce:ns3dce /home/ns3dce/pquic
+
+# USER ns3dce
 
 # NS3 DCE patch
 WORKDIR /home/ns3dce/dce-linux-dev/source/ns-3-dce
@@ -38,7 +41,7 @@ RUN wget https://www.openssl.org/source/openssl-1.1.1d.tar.gz && \
 WORKDIR openssl-1.1.1d
 RUN ./config && \
     make -j$(nproc) && \
-    sudo make install 
+    sudo make install
 ENV LD_LIBRARY_PATH /usr/local/lib
 
 # LibArchive
@@ -46,7 +49,7 @@ WORKDIR /home/ns3dce
 RUN wget --no-check-certificate https://www.libarchive.org/downloads/libarchive-3.6.1.tar.gz && \
     tar xf libarchive-3.6.1.tar.gz
 WORKDIR libarchive-3.6.1
-RUN ./configure --disable-bsdtar --disable-bsdcpio --without-openssl && \ 
+RUN ./configure --disable-bsdtar --disable-bsdcpio --without-openssl && \
     make -j$(nproc) && \
 #    make check -j$(nproc) && \
     sudo make install

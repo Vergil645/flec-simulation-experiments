@@ -5,3 +5,10 @@ jail/*
 *.pcap
 .test_suite.lock
 .idea
+.vscode
+
+reproduce_logs
+result_plots.dir
+results_db.dir
+results_db
+results_plots_*

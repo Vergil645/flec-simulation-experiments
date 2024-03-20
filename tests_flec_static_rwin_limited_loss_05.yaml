@@ -1,0 +1,81 @@
+binaries:
+  rwin-limited-download: 'rwin-limited-download/bin/rwin-limited-download'
+
+
+plugins:
+  static_fec_buffer_limited_bbr:
+    name: STATIC_FEC_BUFFER_LIMITED_BBR
+    plugins:
+      - plugins/static_fec/fec_buffer_limited.plugin
+      - plugins/loss_monitor/loss_monitor.plugin
+      # - plugins/memorizing_loss_monitor/memorizing_loss_monitor.plugin
+      - plugins/no_pacing/pacing_with_event.plugin
+      # - plugins/static_fec/disable_congestion_control.plugin
+    additional_params:
+      use_fec_api: "1"
+      set_cc_algo: "bbr"
+      # set_cc_algo: "nocc"
+  simple_fec_buffer_limited_bbr:
+    name: SIMPLE_FEC_BUFFER_LIMITED_BBR
+    plugins:
+      - plugins/simple_fec/fec_buffer_limited.plugin
+      - plugins/loss_monitor/loss_monitor.plugin
+      - plugins/no_pacing/pacing_with_event.plugin
+    additional_params:
+      use_fec_api: "1"
+      set_cc_algo: "bbr"
+  bbr:
+    name: BBR
+    plugins: []
+      # - plugins/static_fec/disable_congestion_control.plugin
+    additional_params:
+      use_fec_api: "0"
+      set_cc_algo: "bbr"
+      # set_cc_algo: "nocc"
+
+
+definitions:
+  rwin-limited-download:
+    params:
+      delay:
+        range: [200, 200]
+        # range: [100, 100]
+        type: float
+        units: ms
+      bandwidth:
+        range: [8, 8]
+        # range: [50, 50]
+        # range: [80, 80]
+        type: float
+        units: Mbps
+      loss_rate_to_client:
+        range: [0.5,0.5]
+        type: float
+      loss_rate_to_server:
+        range: [0.5,0.5]
+        type: float
+      seed:
+        range: [5, 10000]
+        type: int
+      wifi_distance_meters:
+        range: [1, 20]
+        type: int
+    variants:
+      stream_receive_window_size:
+      # set_fixed_cwin:
+        - 70000
+        - 150000
+        - 250000
+        - 400000
+        - 1000000
+        - 3000000
+
+      filesize:
+        - 5_000_000
+      plugins:
+        - static_fec_buffer_limited_bbr
+        # - simple_fec_buffer_limited_bbr
+        - bbr
+
+    sim_timeout: 600
+    hard_timeout: 60

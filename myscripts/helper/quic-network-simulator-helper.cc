@@ -287,6 +287,11 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::string filesize, std
       dce.AddArgument(maximum_stream_receive_window_size);
   }
 
+  if (fixed_cwin != 0) {
+      dce.AddArgument("-W");
+      dce.AddArgument(std::to_string(fixed_cwin));
+  }
+
   if (stof(repair_receive_window_size) != -1) {
       dce.AddArgument("-F");
       dce.AddArgument(repair_receive_window_size);

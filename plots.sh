@@ -1,5 +1,7 @@
 # to run in the parent dir
 
+# ===== SIMPLE FEC (FlEC) =====
+
 # bulk experimental design
 python3 plot_results.py --namefirsttest simple_fec_bulk_bbr --namesecondtest bbr -f results_db/bulk.db --filesize 10000,40000,100000,1000000,10000000 -m CDF --metric time --labelfirsttest "QUIC FEC" --labelsecondtest QUIC --transform ratio --xlabel '$\frac{DCT_{FlEC}}{DCT_{QUIC}}$' --ylabel 'CDF' --ylim 0,1.005 --yticks 0,1 --xlim 0.25,4 --xticks 0.25,0.5,0.75,1,1.33,2,4 --title '$bw \in [1, 30]Mbps$, $loss \in [0.1, 8]\%$, $RTT \in [10, 200]ms$' --labelfirsttest "QUIC-FEC" --labelsecondtest "QUIC" -t results_plots/bulk.pdf --log
 
@@ -56,3 +58,52 @@ python3 plot_results.py --namefirsttest simple_fec_message_bbr,simple_fec_messag
 # bbr experimental design
 python3 plot_results.py --namefirsttest simple_fec_message_bbr --namesecondtest bbr --transform ratio -m CDF -f results_db/messages_experimental_design.db --metric message_long_deliveries_pct,server_bytes_sent --filesize 5000000,0,0,0 --xlabel "ratio" --labelfirsttest "FlEC" --labelsecondtest "QUIC" --ylabel "CDF" --xlim 0.5,2 --ylim 0,1 --xticks "0.5,0.75,1,1.33,2=0.5,0.75,1,1.33,2" --log --title '$RTT \in [10, 400]ms$, $bw \in [0.8, 30]Mbps$, $loss \in [0.1, 3]\%$' -t results_plots/messages_experimental_design.pdf --legends '$\frac{\#msg_{FlEC}}{\#msg_{QUIC}}$,$\frac{bytes_{FlEC}}{bytes_{QUIC}}$'
 
+
+# ===== STATIC FEC (ABC) =====
+
+# bulk experimental design
+
+# # TIME: static_fec_bulk_bbr vs QUIC
+python3 plot_results.py --namefirsttest static_fec_bulk_bbr --namesecondtest bbr -f results_db/static_bulk.db --filesize 10000,40000,100000,1000000,10000000 -m CDF --metric time --labelfirsttest "QUIC FEC" --labelsecondtest QUIC --transform ratio --xlabel '$\frac{DCT_{ABC}}{DCT_{QUIC}}$' --ylabel 'CDF' --ylim 0,1.005 --yticks 0,1 --xlim 0.25,4 --xticks 0.25,0.5,0.75,1,1.33,2,4 --title '$bw \in [1, 30]Mbps$, $loss \in [0.1, 8]\%$, $RTT \in [10, 200]ms$' --labelfirsttest "QUIC-FEC" --labelsecondtest "QUIC" -t results_plots/static_fec_bulk_bbr.pdf --log
+
+# # TIME: simple_fec_bulk_bbr vs QUIC
+python3 plot_results.py --namefirsttest simple_fec_bulk_bbr --namesecondtest bbr -f results_db/static_bulk.db --filesize 10000,40000,100000,1000000,10000000 -m CDF --metric time --labelfirsttest "QUIC FEC" --labelsecondtest QUIC --transform ratio --xlabel '$\frac{DCT_{FlEC}}{DCT_{QUIC}}$' --ylabel 'CDF' --ylim 0,1.005 --yticks 0,1 --xlim 0.25,4 --xticks 0.25,0.5,0.75,1,1.33,2,4 --title '$bw \in [1, 30]Mbps$, $loss \in [0.1, 8]\%$, $RTT \in [10, 200]ms$' --labelfirsttest "QUIC-FEC" --labelsecondtest "QUIC" -t results_plots/simple_fec_bulk_bbr.pdf --log
+
+# # TIME: static_fec_bulk_bbr vs simple_fec_bulk_bbr
+
+python3 plot_results.py --namefirsttest static_fec_bulk_bbr --namesecondtest simple_fec_bulk_bbr -f results_db/static_bulk.db --filesize 10000,40000,100000,1000000,10000000 -m CDF --metric time --labelfirsttest "QUIC FEC" --labelsecondtest QUIC --transform ratio --xlabel '$\frac{DCT_{ABC}}{DCT_{FlEC}}$' --ylabel 'CDF' --ylim 0,1.005 --yticks 0,1 --xlim 0.25,4 --xticks 0.25,0.5,0.75,1,1.33,2,4 --title '$bw \in [1, 30]Mbps$, $loss \in [0.1, 8]\%$, $RTT \in [10, 200]ms$' --labelfirsttest "QUIC-FEC" --labelsecondtest "QUIC" -t results_plots/static_vs_simple_fec_bulk_bbr.pdf --log
+
+# # BYTES SENT: static_fec_bulk_bbr vs QUIC
+python3 plot_results.py --namefirsttest static_fec_bulk_bbr --namesecondtest bbr -f results_db/static_bulk.db --filesize 10000,40000,100000,1000000,10000000 -m CDF --metric server_bytes_sent --labelfirsttest "QUIC FEC" --labelsecondtest QUIC --transform ratio --xlabel '$\frac{BS_{ABC}}{BS_{QUIC}}$' --ylabel 'CDF' --ylim 0,1.005 --yticks 0,1 --xlim 0.25,4 --xticks 0.25,0.5,0.75,1,1.33,2,4 --title '$bw \in [1, 30]Mbps$, $loss \in [0.1, 8]\%$, $RTT \in [10, 200]ms$' --labelfirsttest "QUIC-FEC" --labelsecondtest "QUIC" -t results_plots/bytes_static_fec_bulk_bbr.pdf --log
+
+# # BYTES SENT: simple_fec_bulk_bbr vs QUIC
+python3 plot_results.py --namefirsttest simple_fec_bulk_bbr --namesecondtest bbr -f results_db/static_bulk.db --filesize 10000,40000,100000,1000000,10000000 -m CDF --metric server_bytes_sent --labelfirsttest "QUIC FEC" --labelsecondtest QUIC --transform ratio --xlabel '$\frac{BS_{FlEC}}{BS_{QUIC}}$' --ylabel 'CDF' --ylim 0,1.005 --yticks 0,1 --xlim 0.25,4 --xticks 0.25,0.5,0.75,1,1.33,2,4 --title '$bw \in [1, 30]Mbps$, $loss \in [0.1, 8]\%$, $RTT \in [10, 200]ms$' --labelfirsttest "QUIC-FEC" --labelsecondtest "QUIC" -t results_plots/bytes_simple_fec_bulk_bbr.pdf --log
+
+# # BYTES SENT: static_fec_bulk_bbr vs simple_fec_bulk_bbr
+python3 plot_results.py --namefirsttest static_fec_bulk_bbr --namesecondtest simple_fec_bulk_bbr -f results_db/static_bulk.db --filesize 10000,40000,100000,1000000,10000000 -m CDF --metric server_bytes_sent --labelfirsttest "QUIC FEC" --labelsecondtest QUIC --transform ratio --xlabel '$\frac{BS_{ABC}}{BS_{FlEC}}$' --ylabel 'CDF' --ylim 0,1.005 --yticks 0,1 --xlim 0.25,4 --xticks 0.25,0.5,0.75,1,1.33,2,4 --title '$bw \in [1, 30]Mbps$, $loss \in [0.1, 8]\%$, $RTT \in [10, 200]ms$' --labelfirsttest "QUIC-FEC" --labelsecondtest "QUIC" -t results_plots/bytes_static_vs_simple_fec_bulk_bbr.pdf --log
+
+
+# buffer-limited
+
+# # TIME, loss=0.5: static_fec_buffer_limited_bbr vs QUIC
+python3 boxplot_results.py --namefirsttest static_fec_buffer_limited_bbr --namesecondtest bbr --transform ratio -m boxplot -f results_db/static_rwin_limited_loss_05.db --metric time --uni-x-metric stream_receive_window_size --filesize 5000000 --xlabel "receive window size (MB)" --no-legend --ylog --ylabel '$\frac{DCT_{ABC}}{DCT_{QUIC}}$'  --title "RTT = 400ms, BW = 8Mbps, loss = 0.5\%"  --ylim 0.6,1.67 --yticks "0.75,0.9,1,1.11,1.33=0.75,0.9,,1.11,1.33" --xticks "70000,150000,250000,400000,1000000,3000000=0.07,0.15,0.25,0.4,1,3" -t results_plots/static_fec_rwin_limited_loss_05.pdf
+
+
+# # TIME, loss=2: static_fec_buffer_limited_bbr vs QUIC
+python3 boxplot_results.py --namefirsttest static_fec_buffer_limited_bbr --namesecondtest bbr --transform ratio -m boxplot -f results_db/static_rwin_limited_loss_2.db --metric time --uni-x-metric stream_receive_window_size --filesize 5000000 --xlabel "receive window size (MB)" --no-legend --ylog --ylabel '$\frac{DCT_{ABC}}{DCT_{QUIC}}$'  --title "RTT = 400ms, BW = 8Mbps, loss = 2\%"  --ylim 0.6,1.67 --yticks "0.75,0.9,1,1.11,1.33=0.75,0.9,,1.11,1.33" --xticks "70000,150000,250000,400000,1000000,3000000=0.07,0.15,0.25,0.4,1,3" -t results_plots/static_fec_rwin_limited_loss_2.pdf
+
+
+# # experimental design bursts: static_fec_buffer_limited_bbr
+python3 plot_results.py --namefirsttest static_fec_buffer_limited_bbr --namesecondtest bbr --transform ratio -m CDF -f results_db/static_rwin_limited_experimental_design_bursty.db --metric time --filesize 5000000 --xlabel "$\frac{DCT_{ABC}}{DCT_{QUIC}}$" --ylabel "CDF" --xlim 0.5,2 --xticks 0.5,0.75,1,1.33,2 --cdf-multiplex-metric stream_receive_window_size --cdf-multiplex-metric-in-bytes --log --title '$RTT \in [10, 400]ms$, $bw \in [1, 30]Mbps$, $G_{\hat{p}} \in [0.1, 1.5]\%$' -t results_plots/static_fec_rwin_limited_experimental_design_bursty.pdf
+
+
+# # experimental design: static_fec_buffer_limited_bbr
+python3 plot_results.py --namefirsttest static_fec_buffer_limited_bbr --namesecondtest bbr --transform ratio -m CDF -f results_db/static_rwin_limited_experimental_design.db --metric time --filesize 5000000 --xlabel "$\frac{DCT_{ABC}}{DCT_{QUIC}}$" --ylabel "CDF" --xlim 0.25,4 --xticks=0.25,0.5,0.75,1,1.33,2,4 --cdf-multiplex-metric stream_receive_window_size --cdf-multiplex-metric-in-bytes --log --title '$RTT \in [10, 400]ms$, $bw \in [1, 30]Mbps$, $loss \in [0.1, 3]\%$'  -t results_plots/static_fec_rwin_limited_experimental_design.pdf
+
+
+# time VS bytes tradeoff 150kB: static_fec_buffer_limited_bbr
+python3 plot_results_bytes_time_tradeoff.py --namefirsttest static_fec_buffer_limited_bbr --namesecondtest bbr -f results_db/static_rwin_limited_scatter_150kB.db --metric time --uni-x-metric server_bytes_sent_static_fec_buffer_limited_bbr,server_bytes_sent_bbr --filesize 5000000 --xlabel "bytes overhead" --ylabel "DCT (ms)" --title "RTT = 400ms, BW = 8Mbps, loss = 2\%, rwin=150kB" --rwin-size 150000 --labelfirsttest ABC --labelsecondtest QUIC --normalize-bytes-sent -t results_plots/static_fec_rwin_limited_scatter_150kB.pdf
+
+
+# time VS bytes tradeoff 6MB: static_fec_buffer_limited_bbr
+python3 plot_results_bytes_time_tradeoff.py --namefirsttest static_fec_buffer_limited_bbr --namesecondtest bbr -f results_db/static_rwin_limited_scatter_6MB.db --metric time --uni-x-metric server_bytes_sent_static_fec_buffer_limited_bbr,server_bytes_sent_bbr --filesize 5000000 --xlabel "bytes overhead" --ylabel "DCT (ms)" --title "RTT = 400ms, BW = 8Mbps, loss = 0.5\%, rwin=6MB" --rwin-size 6000000 --labelfirsttest ABC --labelsecondtest QUIC --normalize-bytes-sent -t results_plots/static_fec_rwin_limited_scatter_6MB.pdf --ylim 7000,8200 --yticks 7000,7500,8000

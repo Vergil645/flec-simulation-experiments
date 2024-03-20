@@ -12,10 +12,15 @@ import io
 from functools import partial
 import random
 from time import sleep, time
+from datetime import datetime
 
 import yaml
 
 from experimental_design import load_wsp, ParamsGenerator
+
+
+random.seed(datetime.now().timestamp())
+
 
 if not os.path.exists('/.dockerenv'):
     print('This script is meant to be run inside the container', file=sys.stderr)
@@ -63,20 +68,21 @@ def run(*args, stdout=True, stderr=True, shell=True, env=None, timeout=None):
 
 def build_ns3():
     os.chdir(ns3_dir)
-    if run('./waf -j1', stderr=test_args.debug) is not 0:
+    if run('./waf -j1', stderr=test_args.debug) != 0:
         print('Building ns-3 failed', file=sys.stderr)
         exit(0)
     os.chdir(script_dir)
 
 
 def build_pquic():
-    if run(os.path.join(script_dir, 'prepare_pquic.sh'), stdout=test_args.debug, stderr=test_args.debug) is not 0:
+    if run(os.path.join(script_dir, 'prepare_pquic.sh'), stdout=test_args.debug, stderr=test_args.debug) != 0:
         print('Building pquic failed', file=sys.stderr)
         exit(0)
 
 
 def compute_queue(bandwidth, delay):
     return 1.5 * (bandwidth / 8) * 1024 * 1024 * (2 * delay / 1000) // 1200
+    # return 1000000
 
 
 def read_all(filename, mode='r'):
@@ -101,6 +107,8 @@ def collect_additional_metrics(additional_modules, server_log_file, client_log_f
 
 
 def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, variant_additional_params, env=None):
+    output_lines = []
+
     bw, fs = values['bandwidth'][0], values['filesize'][0]
     failures = []
 
@@ -124,13 +132,16 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, variant
             print("Transfering %d bytes over a %.2fMbps link in less than %d secs is deemed impossible, skipping" % (fs, bw, sim_timeout), file=sys.stderr)
             failures.append("Link speed and filesize do not match timeout")
         else:
-            print('Test started:', binary, ' '.join(args), env)
+            # print('Test started:', binary, ' '.join(args), env)
+            output_lines += [' '.join(['Test started:', str(binary), ' '.join(args), str(env)])]
             c = run(os.path.join(ns3_dir, 'build', 'myscripts', tests['binaries'][binary]), *args, shell=False, env=env, timeout=hard_timeout)
-            if c is not 0 and c != 'timeout':
-                print("Failed test: %s returned %d" % (b, c), file=sys.stderr)
+            if c != 0 and c != 'timeout':
+                # print("Failed test: %s returned %d" % (b, c), file=sys.stderr)
+                output_lines += ["Failed test: %s returned %d" % (b, c)]
                 failures.append("Failed test")
             elif c == 'timeout':
-                print("Timeout reached", file=sys.stderr)
+                # print("Timeout reached", file=sys.stderr)
+                output_lines += ["Timeout reached"]
                 failures.append("Timeout reached")
 
         end = time()
@@ -191,32 +202,94 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, variant
             failures.append('Client exit code was not 0')
         additional_metrics = {}
         transfer_time = None
+
+        if False and ' '.join(args) == "--bandwidth=1.82Mbps --delay=11.79ms --filesize=10000 --loss_rate_to_client=0.65 --loss_rate_to_server=5.60 --seed=5577 --stream_receive_window_size=1000000000 --wifi_distance_meters=5 --queue=7 --use_fec_api=1 --set_cc_algo=bbr":
+            output_lines += [' '.join(["client stderr"])]
+            output_lines.extend(list(map(lambda s: "    " + s, client_stderr.split('\n'))))
+            output_lines += [' '.join(['+' * 20])]
+
+            output_lines += [' '.join(["server stderr"])]
+            output_lines.extend(list(map(lambda s: "    " + s, server_stderr.split('\n'))))
+            output_lines += [' '.join(['+' * 20])]
+
+            output_lines += [' '.join(["client stdout"])]
+            output_lines += [' '.join([repr(client_status)])]
+            output_lines.extend(list(map(lambda s: "    " + s, client_stdout.split('\n'))))
+            output_lines += [' '.join(['+' * 20])]
+
+            output_lines += [' '.join(["server stdout"])]
+            output_lines += [' '.join([repr(server_status)])]
+            output_lines.extend(list(map(lambda s: "    " + s, server_stdout.split('\n'))))
+            output_lines += [' '.join(['+' * 20])]
+
+        # output_lines += [' '.join(["client stderr"])]
+        # output_lines.extend(list(map(lambda s: "    " + s, client_stderr.split('\n'))))
+        # output_lines += [' '.join(['+' * 20])]
+
+        # output_lines += [' '.join(["server stderr"])]
+        # output_lines.extend(list(map(lambda s: "    " + s, server_stderr.split('\n'))))
+        # output_lines += [' '.join(['+' * 20])]
+
+        # output_lines += [' '.join(["client stdout"])]
+        # output_lines += [' '.join([repr(client_status)])]
+        # output_lines.extend(list(map(lambda s: "    " + s, client_stdout.split('\n'))))
+        # output_lines += [' '.join(['+' * 20])]
+
+        # output_lines += [' '.join(["server stdout"])]
+        # output_lines += [' '.join([repr(server_status)])]
+        # output_lines.extend(list(map(lambda s: "    " + s, server_stdout.split('\n'))))
+        # output_lines += [' '.join(['+' * 20])]
+
+        # ### SPECIAL ###
+
+        # output_lines += [' '.join(["server stdout"])]
+        # output_lines += [' '.join([repr(server_status)])]
+        # output_lines.extend(list(filter(lambda s: "BULK PC" in s or "SI WTS: FEC" in s,
+        #     map(lambda s: "    " + s, server_stdout.split('\n')))))
+        # output_lines += [' '.join(['+' * 20])]
+
         if failures:
-            print("client stdout start")
-            print(repr(client_status), repr(client_stdout[:10000]))
-            print('+' * 20)
-            print("client stdout end")
-            print(repr(client_stdout[-10000:]))
-            print('-' * 20)
-            print("server stdout start")
-            print(repr(server_status), repr(server_stdout[:10000]))
-            print('+' * 20)
-            print("server stdout end")
-            print(repr(server_stdout[-10000:]))
-            print('-' * 20)
-            print("client stderr start")
-            print(repr(client_stderr[:10000]))
-            print('+' * 20)
-            print("client stderr end")
-            print(repr(client_stderr[-10000:]))
-            print('-' * 20)
-            print("server stderr start")
-            print(repr(server_stderr[:10000]))
-            print('+' * 20)
-            print("server stderr end")
-            print(repr(server_stderr[-10000:]))
-            print(failures)
-            print('Test crashed:', binary, ' '.join(args), env, 'after (real-time) %.2fs' % (end - start))
+            # output_lines += [' '.join(["client stderr"])]
+            # output_lines.extend(list(map(lambda s: "    " + s, client_stderr.split('\n'))))
+            # output_lines += [' '.join(['+' * 20])]
+            # output_lines += [' '.join(["server stderr"])]
+            # output_lines.extend(list(map(lambda s: "    " + s, server_stderr.split('\n'))))
+            # output_lines += [' '.join(['+' * 20])]
+            # output_lines += [' '.join(["client stdout"])]
+            # output_lines += [' '.join([repr(client_status)])]
+            # output_lines.extend(list(map(lambda s: "    " + s, client_stdout.split('\n'))))
+            # output_lines += [' '.join(['+' * 20])]
+            # output_lines += [' '.join(["server stdout"])]
+            # output_lines += [' '.join([repr(server_status)])]
+            # output_lines.extend(list(map(lambda s: "    " + s, server_stdout.split('\n'))))
+            # output_lines += [' '.join(['+' * 20])]
+
+            output_lines += [' '.join(["client stdout start"])]
+            output_lines += [' '.join([repr(client_status), repr(client_stdout[:10000])])]
+            output_lines += [' '.join(['+' * 20])]
+            output_lines += [' '.join(["client stdout end"])]
+            output_lines += [' '.join([repr(client_stdout[-10000:])])]
+            output_lines += [' '.join(['-' * 20])]
+            output_lines += [' '.join(["server stdout start"])]
+            output_lines += [' '.join([repr(server_status), repr(server_stdout[:10000])])]
+            output_lines += [' '.join(['+' * 20])]
+            output_lines += [' '.join(["server stdout end"])]
+            output_lines += [' '.join([repr(server_stdout[-10000:])])]
+            output_lines += [' '.join(['-' * 20])]
+            output_lines += [' '.join(["client stderr start"])]
+            output_lines += [' '.join([repr(client_stderr[:10000])])]
+            output_lines += [' '.join(['+' * 20])]
+            output_lines += [' '.join(["client stderr end"])]
+            output_lines += [' '.join([repr(client_stderr[-10000:])])]
+            output_lines += [' '.join(['-' * 20])]
+            output_lines += [' '.join(["server stderr start"])]
+            output_lines += [' '.join([repr(server_stderr[:10000])])]
+            output_lines += [' '.join(['+' * 20])]
+            output_lines += [' '.join(["server stderr end"])]
+            output_lines += [' '.join([repr(server_stderr[-10000:])])]
+
+            output_lines += [' '.join([str(failures)])]
+            output_lines += [' '.join(['Test crashed:', str(binary), ' '.join(args), str(env), 'after (real-time) %.2fs' % (end - start)])]
         else:
             lines = client_stdout.splitlines()
             for i in range(5):
@@ -226,10 +299,16 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, variant
                     break
                 except ValueError:
                     pass
-            client_stdout_file = io.StringIO(client_stdout)
-            server_stdout_file = io.StringIO(server_stdout)
+
+            # client_stdout_file = io.StringIO(client_stdout)
+            # server_stdout_file = io.StringIO(server_stdout)
+            client_stdout_file = client_stdout.splitlines()
+            server_stdout_file = server_stdout.splitlines()
+
             additional_metrics = collect_additional_metrics(additional_metrics_modules, server_stdout_file, client_stdout_file, values)
-            print('Test finished:', binary, ' '.join(args), env, 'in (simulated)', transfer_time, '(real-time) %.2fs' % (end - start))
+            output_lines += [' '.join(['Test finished:', str(binary), ' '.join(args), str(env), 'in (simulated)', str(transfer_time), '(real-time) %.2fs' % (end - start)])]
+
+        print('\n'.join(output_lines))
 
         return {'start': start, 'end': end, 'values': values, 'cmdline': '%s %s' % (binary, ' '.join(args)),
                 'failures': failures, 'transfer_time': transfer_time, 'additional_metrics': additional_metrics}
@@ -240,6 +319,8 @@ results = {}
 wsp_matrix = load_wsp(os.path.join(script_dir, 'wsp_20_col'), 20, 95)
 with open(os.path.join(script_dir, test_args.test_file)) as f:
     tests = yaml.load(f)
+
+generated_seed = [random.random() for _ in range(len(wsp_matrix[0]))]
 
 build_ns3()
 build_pquic()
@@ -268,7 +349,7 @@ for b, opts in tests['definitions'].items():
 
     results[b] = {'plugins': {}}
 
-    variants = ["filesize", "loss_rate_to_client", "avg_burst_size_to_client", "avg_burst_size_to_server", "stream_receive_window_size"]
+    variants = ["filesize", "loss_rate_to_client", "avg_burst_size_to_client", "avg_burst_size_to_server", "stream_receive_window_size", "set_fixed_cwin"]
 
     def recurse(variants, plugin_paths):
         if len(variants) == 0:
@@ -282,7 +363,11 @@ for b, opts in tests['definitions'].items():
             else:
                 with multiprocessing.Pool(processes=os.environ.get('NPROC')) as pool:
                     r = results[b]['plugins'].get(p_id, [])
-                    r.extend(pool.starmap(run_binary, [(tests, b, params, v, opts['sim_timeout'], opts['hard_timeout'], tests['plugins'][p_id].get("additional_params", {}), {'PQUIC_PLUGINS': plugin_paths}) for v in ParamsGenerator(params, wsp_matrix).generate_values_until(test_args.limit)]))
+                    values_generator = ParamsGenerator(params, wsp_matrix, generated_seed, use_generated_seed=False).generate_values_until(test_args.limit)
+                    # values_generator = ParamsGenerator(params, wsp_matrix, generated_seed, use_generated_seed=True).generate_values_until(test_args.limit)
+                    # values_generator = ParamsGenerator(params, wsp_matrix, generated_seed).generate_values_until(3)
+                    # values_generator = ParamsGenerator(params, wsp_matrix, generated_seed).generate_values_until(1)
+                    r.extend(pool.starmap(run_binary, [(tests, b, params, v, opts['sim_timeout'], opts['hard_timeout'], tests['plugins'][p_id].get("additional_params", {}), {'PQUIC_PLUGINS': plugin_paths}) for v in values_generator]))
                     results[b]['plugins'][p_id] = r
             if val:
                 del params[variant]

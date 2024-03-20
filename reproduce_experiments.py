@@ -13,14 +13,18 @@ parser.add_argument('flec_dir', type=str, default="../flec", help='The directory
 args = parser.parse_args()
 
 additional_metrics = {
-    "rwin-limited-download": "additional_metrics_bytes_sent",
-    "video-with-losses": "additional_metrics_message_based",
+    "rwin-limited-download": "additional_metrics_bytes_sent,additional_metrics_code_params",
+    "video-with-losses": "additional_metrics_message_based,additional_metrics_code_params",
 }
 
 experiments = {
     "rwin-limited-download": [
         "bulk", "rwin_limited_experimental_design_bursty",  "rwin_limited_loss_05",  "rwin_limited_scatter_150kB",
-        "rwin_limited_experimental_design", "rwin_limited_loss_2", "rwin_limited_scatter_6MB"
+        "rwin_limited_experimental_design", "rwin_limited_loss_2", "rwin_limited_scatter_6MB",
+
+        "static_bulk",
+        "static_rwin_limited_loss_05", "static_rwin_limited_loss_2", "static_rwin_limited_experimental_design_bursty", "static_rwin_limited_experimental_design",
+        "static_rwin_limited_scatter_150kB", "static_rwin_limited_scatter_6MB",
     ],
     "video-with-losses": [
         "messages_experimental_design", "messages_loss_1"

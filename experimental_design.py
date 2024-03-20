@@ -58,7 +58,7 @@ def load_wsp(filename, nrows, ncols):
 
 
 class ParamsGenerator(object):
-    def __init__(self, params_values, matrix):
+    def __init__(self, params_values, matrix, generated_seed, use_generated_seed=False):
         self.index = 0
         self.params_values = params_values
         for k in ('delay_ms_a', 'delay_ms_b'):
@@ -80,6 +80,8 @@ class ParamsGenerator(object):
         # decide for an arbitrary ordering of the parameters
         self.params_indexes = {self.param_full_names[i]: i for i in range(len(self.param_full_names))}
         self.matrix = matrix
+        self.generated_seed = generated_seed
+        self.use_generated_seed = use_generated_seed
 
     def _full_name(self, name, count, key=None):
         if self.params_values[name].get("count", 1) > 1:
@@ -104,7 +106,7 @@ class ParamsGenerator(object):
                 else:
                     full_name = self._full_name(name, count)
                     param_index = self.params_indexes[full_name]
-                    float_value = self.matrix[param_index][i]
+                    float_value = self.generated_seed[i] if self.use_generated_seed and full_name == "seed" else self.matrix[param_index][i]
                     to_append = self.params_values[name]["type"](float_value * (param_range[1] - param_range[0]) + param_range[0])
                 retval[name].append(to_append)
         return retval

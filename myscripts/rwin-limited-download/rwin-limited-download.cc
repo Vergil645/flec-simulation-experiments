@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     int apply_malus_on_rwin = 0;
     int wifi_distance_meters = 1;
     CommandLine cmd;
-    
+
     cmd.AddValue("delay", "delay of the p2p link", delay);
     cmd.AddValue("bandwidth", "bandwidth of the p2p link", bandwidth);
     cmd.AddValue("queue", "queue size of the p2p link (in packets)", queue);
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     cmd.AddValue("seed", "seed for the loss generator", random_seed);
     cmd.AddValue("double_loss_rate_after_30s", "if set,  to 0, the loss rate does not vary during the connection. If set to 1, the loss rate doubles after 30s", double_loss_rate_after_30s);
     cmd.AddValue("stream_receive_window_size", "the size in bytes of the receive window", stream_receive_window_size);
-    cmd.AddValue("apply_malus_on_rwin", "set to 1  if the rwin should be reduced of max(10kB, 0.01*rwin) bytes compared to the advertized value of stream_receive_window_size", apply_malus_on_rwin);
+    cmd.AddValue("apply_malus_on_rwin", "set to 1  if the rwin should be reduced of max(10kB, 0.05*rwin) bytes compared to the advertized value of stream_receive_window_size", apply_malus_on_rwin);
     cmd.AddValue("use_fec_api", "set to 0 if the app must not use the fec-defined API, set tu !0 otherwise", use_fec_api_str);
     cmd.AddValue("set_fixed_cwin", "set to 0 if the cwin must be fixed to the BDP", set_fixed_cwin);
     cmd.AddValue("set_cc_algo", "set to cubic|bbr|newreno to set the cc algo", cc_algo);
@@ -147,14 +147,15 @@ int main(int argc, char *argv[]) {
         wifi_distance_meters = std::stoi(wifi_distance_meters_str);
     }
 
-    QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesize, stream_receive_window_size, repair_receive_window_size, (long int) bandwidth_to_set, cc_algo, wifi_standard, std::string("capture_seed_" + random_seed + "_delay_" + delay), wifi_distance_meters);
+    // QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesize, stream_receive_window_size, repair_receive_window_size, (long int) bandwidth_to_set, cc_algo, wifi_standard, std::string("capture_seed_" + random_seed + "_delay_" + delay), wifi_distance_meters);
+    QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesize, stream_receive_window_size, repair_receive_window_size, (long int) set_fixed_cwin, cc_algo, wifi_standard, std::string("capture_seed_" + random_seed + "_delay_" + delay), wifi_distance_meters);
 
     // Stick in the point-to-point line between the sides.
     QuicPointToPointHelper p2p;
     p2p.SetDeviceAttribute("DataRate", StringValue(bandwidth));
     p2p.SetChannelAttribute("Delay", StringValue(delay));
     p2p.SetQueueSize(StringValue(queue + "p"));
-    
+
     NetDeviceContainer devices = p2p.Install(sim.GetLeftNode(), sim.GetRightNode());
     Ipv4AddressHelper ipv4;
     ipv4.SetBase("192.168.50.0", "255.255.255.0");

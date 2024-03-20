@@ -94,7 +94,7 @@ def latexify(fig_width=None, fig_height=None, columns=1):
         fig_height = MAX_HEIGHT_INCHES
 
     params = {'backend': 'ps',
-              'text.latex.preamble': ['\\usepackage{gensymb}','\\usepackage{amsmath}','\\usepackage{amssymb}'],
+              'text.latex.preamble': '\n'.join(['\\usepackage{gensymb}','\\usepackage{amsmath}','\\usepackage{amssymb}']),
               'axes.labelsize': 9, # fontsize for x and y labels (was 10)
               'axes.titlesize': 9,
               #'text.fontsize': 9, # was 10
