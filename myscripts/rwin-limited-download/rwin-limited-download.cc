@@ -139,7 +139,9 @@ int main(int argc, char *argv[]) {
 
     if (apply_malus_on_rwin != 0) {
         long int rwin = stof(stream_receive_window_size);
-        stream_receive_window_size = std::to_string((long int) std::min(0.95*rwin, rwin - 10000.0));
+        // stream_receive_window_size = std::to_string((long int) std::min(0.95*rwin, rwin - 10000.0));
+        // repair_receive_window_size = std::to_string((long int) rwin - stof(stream_receive_window_size));
+        stream_receive_window_size = std::to_string((long int) std::min(0.95*rwin, rwin - 4000.0));
         repair_receive_window_size = std::to_string((long int) rwin - stof(stream_receive_window_size));
     }
 

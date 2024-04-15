@@ -3,35 +3,22 @@ binaries:
 
 
 plugins:
-  static_fec_buffer_limited_bbr:
-    name: STATIC_FEC_BUFFER_LIMITED_BBR
+  abc_rs_buffer_limited_bbr:
+    name: ABC_RS_BUFFER_LIMITED_BBR
     plugins:
-      - plugins/static_fec/fec_buffer_limited.plugin
-      - plugins/loss_monitor/loss_monitor.plugin
-      # - plugins/memorizing_loss_monitor/memorizing_loss_monitor.plugin
-      - plugins/no_pacing/pacing_with_event.plugin
-      - plugins/static_fec/disable_congestion_control.plugin
-    additional_params:
-      use_fec_api: "1"
-      # set_cc_algo: "bbr"
-      set_cc_algo: "nocc"
-  simple_fec_buffer_limited_bbr:
-    name: SIMPLE_FEC_BUFFER_LIMITED_BBR
-    plugins:
-      - plugins/simple_fec/fec_buffer_limited.plugin
+      - plugins/static_fec/abc_rs_buffer_limited.plugin
       - plugins/loss_monitor/loss_monitor.plugin
       - plugins/no_pacing/pacing_with_event.plugin
     additional_params:
       use_fec_api: "1"
       set_cc_algo: "bbr"
+      apply_malus_on_rwin: "1"
   bbr:
     name: BBR
-    plugins: #[]
-      - plugins/static_fec/disable_congestion_control.plugin
+    plugins: []
     additional_params:
       use_fec_api: "0"
-      # set_cc_algo: "bbr"
-      set_cc_algo: "nocc"
+      set_cc_algo: "bbr"
 
 
 definitions:
@@ -46,10 +33,10 @@ definitions:
         type: float
         units: Mbps
       loss_rate_to_client:
-        range: [0.5,0.5]
+        range: [2,2]
         type: float
       loss_rate_to_server:
-        range: [0.5,0.5]
+        range: [2,2]
         type: float
       seed:
         range: [5, 10000]
@@ -58,8 +45,7 @@ definitions:
         range: [1, 20]
         type: int
     variants:
-      # stream_receive_window_size:
-      set_fixed_cwin:
+      stream_receive_window_size:
         - 70000
         - 150000
         - 250000
@@ -70,9 +56,8 @@ definitions:
       filesize:
         - 5_000_000
       plugins:
-        - static_fec_buffer_limited_bbr
-        # - simple_fec_buffer_limited_bbr
+        - abc_rs_buffer_limited_bbr
         - bbr
 
     sim_timeout: 600
-    hard_timeout: 1200
+    hard_timeout: 60

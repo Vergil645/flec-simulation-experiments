@@ -203,14 +203,14 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, variant
         additional_metrics = {}
         transfer_time = None
 
-        if False and ' '.join(args) == "--bandwidth=1.82Mbps --delay=11.79ms --filesize=10000 --loss_rate_to_client=0.65 --loss_rate_to_server=5.60 --seed=5577 --stream_receive_window_size=1000000000 --wifi_distance_meters=5 --queue=7 --use_fec_api=1 --set_cc_algo=bbr":
-            output_lines += [' '.join(["client stderr"])]
-            output_lines.extend(list(map(lambda s: "    " + s, client_stderr.split('\n'))))
-            output_lines += [' '.join(['+' * 20])]
+        if False and ' '.join(args) == "--bandwidth=26.56Mbps --delay=97.54ms --filesize=10000 --loss_rate_to_client=4.25 --loss_rate_to_server=0.88 --seed=6510 --stream_receive_window_size=1000000000 --wifi_distance_meters=2 --queue=849 --use_fec_api=1 --set_cc_algo=bbr":
+            # output_lines += [' '.join(["client stderr"])]
+            # output_lines.extend(list(map(lambda s: "    " + s, client_stderr.split('\n'))))
+            # output_lines += [' '.join(['+' * 20])]
 
-            output_lines += [' '.join(["server stderr"])]
-            output_lines.extend(list(map(lambda s: "    " + s, server_stderr.split('\n'))))
-            output_lines += [' '.join(['+' * 20])]
+            # output_lines += [' '.join(["server stderr"])]
+            # output_lines.extend(list(map(lambda s: "    " + s, server_stderr.split('\n'))))
+            # output_lines += [' '.join(['+' * 20])]
 
             output_lines += [' '.join(["client stdout"])]
             output_lines += [' '.join([repr(client_status)])]
@@ -287,6 +287,21 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, variant
             output_lines += [' '.join(['+' * 20])]
             output_lines += [' '.join(["server stderr end"])]
             output_lines += [' '.join([repr(server_stderr[-10000:])])]
+
+            # output_lines += [' '.join(["client stderr"])]
+            # output_lines.extend(list(map(lambda s: "    " + s, client_stderr.split('\n'))))
+            # output_lines += [' '.join(['+' * 20])]
+            # output_lines += [' '.join(["server stderr"])]
+            # output_lines.extend(list(map(lambda s: "    " + s, server_stderr.split('\n'))))
+            # output_lines += [' '.join(['+' * 20])]
+            # output_lines += [' '.join(["client stdout"])]
+            # output_lines += [' '.join([repr(client_status)])]
+            # output_lines.extend(list(map(lambda s: "    " + s, client_stdout.split('\n'))))
+            # output_lines += [' '.join(['+' * 20])]
+            # output_lines += [' '.join(["server stdout"])]
+            # output_lines += [' '.join([repr(server_status)])]
+            # output_lines.extend(list(map(lambda s: "    " + s, server_stdout.split('\n'))))
+            # output_lines += [' '.join(['+' * 20])]
 
             output_lines += [' '.join([str(failures)])]
             output_lines += [' '.join(['Test crashed:', str(binary), ' '.join(args), str(env), 'after (real-time) %.2fs' % (end - start)])]

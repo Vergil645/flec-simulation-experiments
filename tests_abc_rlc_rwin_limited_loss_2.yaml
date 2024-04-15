@@ -1,0 +1,63 @@
+binaries:
+  rwin-limited-download: 'rwin-limited-download/bin/rwin-limited-download'
+
+
+plugins:
+  abc_rlc_buffer_limited_bbr:
+    name: ABC_RLC_BUFFER_LIMITED_BBR
+    plugins:
+      - plugins/static_fec/abc_rlc_buffer_limited.plugin
+      - plugins/loss_monitor/loss_monitor.plugin
+      - plugins/no_pacing/pacing_with_event.plugin
+    additional_params:
+      use_fec_api: "1"
+      set_cc_algo: "bbr"
+      apply_malus_on_rwin: "1"
+  bbr:
+    name: BBR
+    plugins: []
+    additional_params:
+      use_fec_api: "0"
+      set_cc_algo: "bbr"
+
+
+definitions:
+  rwin-limited-download:
+    params:
+      delay:
+        range: [200, 200]
+        type: float
+        units: ms
+      bandwidth:
+        range: [8, 8]
+        type: float
+        units: Mbps
+      loss_rate_to_client:
+        range: [2,2]
+        type: float
+      loss_rate_to_server:
+        range: [2,2]
+        type: float
+      seed:
+        range: [5, 10000]
+        type: int
+      wifi_distance_meters:
+        range: [1, 20]
+        type: int
+    variants:
+      stream_receive_window_size:
+        - 70000
+        - 150000
+        - 250000
+        - 400000
+        - 1000000
+        - 3000000
+
+      filesize:
+        - 5_000_000
+      plugins:
+        - abc_rlc_buffer_limited_bbr
+        - bbr
+
+    sim_timeout: 600
+    hard_timeout: 60

@@ -3,22 +3,19 @@ binaries:
 
 
 plugins:
-  static_fec_buffer_limited_bbr:
-    name: STATIC_FEC_BUFFER_LIMITED_BBR
+  abc_rs_bulk_bbr:
+    name: ABC_RLC_BULK_BBR
     plugins:
-      - plugins/static_fec/fec_buffer_limited.plugin
+      - plugins/static_fec/abc_rs_bulk.plugin
       - plugins/loss_monitor/loss_monitor.plugin
-      # - plugins/memorizing_loss_monitor/memorizing_loss_monitor.plugin
       - plugins/no_pacing/pacing_with_event.plugin
-      # - plugins/static_fec/disable_congestion_control.plugin
     additional_params:
       use_fec_api: "1"
       set_cc_algo: "bbr"
-      # set_cc_algo: "nocc"
-  simple_fec_buffer_limited_bbr:
-    name: SIMPLE_FEC_BUFFER_LIMITED_BBR
+  flec_bulk_bbr:
+    name: FLEC_BULK_BBR
     plugins:
-      - plugins/simple_fec/fec_buffer_limited.plugin
+      - plugins/simple_fec/fec_bulk.plugin
       - plugins/loss_monitor/loss_monitor.plugin
       - plugins/no_pacing/pacing_with_event.plugin
     additional_params:
@@ -27,33 +24,31 @@ plugins:
   bbr:
     name: BBR
     plugins: []
-      # - plugins/static_fec/disable_congestion_control.plugin
     additional_params:
       use_fec_api: "0"
       set_cc_algo: "bbr"
-      # set_cc_algo: "nocc"
 
 
 definitions:
   rwin-limited-download:
     params:
       delay:
-        range: [200, 200]
-        # range: [100, 100]
+        range: [5, 100]
         type: float
         units: ms
       bandwidth:
-        range: [8, 8]
-        # range: [50, 50]
-        # range: [80, 80]
+        range: [1, 30]
         type: float
         units: Mbps
       loss_rate_to_client:
-        range: [0.5,0.5]
+        range: [0.1,8]
         type: float
       loss_rate_to_server:
-        range: [0.5,0.5]
+        range: [0.1,8]
         type: float
+      stream_receive_window_size:
+        range: [1000000000, 1000000000]
+        type: int
       seed:
         range: [5, 10000]
         type: int
@@ -61,20 +56,16 @@ definitions:
         range: [1, 20]
         type: int
     variants:
-      stream_receive_window_size:
-      # set_fixed_cwin:
-        - 70000
-        - 150000
-        - 250000
-        - 400000
-        - 1000000
-        - 3000000
-
       filesize:
-        - 5_000_000
+        - 10_000
+        - 40_000
+        - 100_000
+        - 1_000_000
+        - 10_000_000
+
       plugins:
-        - static_fec_buffer_limited_bbr
-        # - simple_fec_buffer_limited_bbr
+        - abc_rs_bulk_bbr
+        - flec_bulk_bbr
         - bbr
 
     sim_timeout: 600

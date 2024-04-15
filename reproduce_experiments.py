@@ -19,15 +19,37 @@ additional_metrics = {
 
 experiments = {
     "rwin-limited-download": [
-        "bulk", "rwin_limited_experimental_design_bursty",  "rwin_limited_loss_05",  "rwin_limited_scatter_150kB",
-        "rwin_limited_experimental_design", "rwin_limited_loss_2", "rwin_limited_scatter_6MB",
+        # ===== FlEC ====
+        "flec_bulk",
+        "flec_rwin_limited_loss_05",
+        "flec_rwin_limited_loss_2",
+        "flec_rwin_limited_scatter_150kB",
+        "flec_rwin_limited_scatter_6MB",
+        "flec_rwin_limited_experimental_design",
+        "flec_rwin_limited_experimental_design_bursty",
 
-        "static_bulk",
-        "static_rwin_limited_loss_05", "static_rwin_limited_loss_2", "static_rwin_limited_experimental_design_bursty", "static_rwin_limited_experimental_design",
-        "static_rwin_limited_scatter_150kB", "static_rwin_limited_scatter_6MB",
+        # ===== ABC with RLC =====
+        "abc_rlc_bulk",
+        "abc_rlc_rwin_limited_loss_05",
+        "abc_rlc_rwin_limited_loss_2",
+        "abc_rlc_rwin_limited_scatter_150kB",
+        "abc_rlc_rwin_limited_scatter_6MB",
+        "abc_rlc_rwin_limited_experimental_design",
+        "abc_rlc_rwin_limited_experimental_design_bursty",
+
+        # ===== ABC with Reed-Solomon =====
+        "abc_rs_bulk",
+        "abc_rs_rwin_limited_loss_05",
+        "abc_rs_rwin_limited_loss_2",
+        "abc_rs_rwin_limited_scatter_150kB",
+        "abc_rs_rwin_limited_scatter_6MB",
+        "abc_rs_rwin_limited_experimental_design",
+        "abc_rs_rwin_limited_experimental_design_bursty",
     ],
     "video-with-losses": [
-        "messages_experimental_design", "messages_loss_1"
+        # ===== FlEC ====
+        "flec_messages_experimental_design",
+        "flec_messages_loss_1"
     ]
 }
 
@@ -37,7 +59,7 @@ for testsuite, tests in experiments.items():
         test_to_testsuite[test] = testsuite
 
 def run_test(test, testsuite, verbose):
-    testsuite_command = "python3 testsuite.py -d -r {test}.json -t {testsuite} -f tests_flec_{test}.yaml -m {additional_metrics}".format(test=test, testsuite=testsuite, additional_metrics=additional_metrics[testsuite])
+    testsuite_command = "python3 testsuite.py -d -r {test}.json -t {testsuite} -f tests_{test}.yaml -m {additional_metrics}".format(test=test, testsuite=testsuite, additional_metrics=additional_metrics[testsuite])
     command = "cd /pquic-ns3-dce/ && export LANG=C.UTF-8 && export LC_ALL=C.UTF-8 && export PQUIC_VIDEO=1 && export PYTHONIOENCODING=utf-8 && bash prepare_video.sh && {testsuite_command} && cp -f $NS3_PATH/{test}.json ./results/".format(testsuite_command=testsuite_command, test=test)
     stdout, stderr = (sys.stdout, sys.stderr) if verbose else (subprocess.DEVNULL, subprocess.DEVNULL)
     return subprocess.run(["bash", "run.sh", os.path.abspath(args.flec_dir), command], stdout=stdout, stderr=stderr).returncode

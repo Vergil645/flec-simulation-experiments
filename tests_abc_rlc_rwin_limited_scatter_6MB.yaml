@@ -3,24 +3,16 @@ binaries:
 
 
 plugins:
-  static_fec_buffer_limited_bbr:
-    name: STATIC_FEC_BUFFER_LIMITED_BBR
+  abc_rlc_buffer_limited_bbr:
+    name: ABC_RLC_BUFFER_LIMITED_BBR
     plugins:
-      - plugins/static_fec/fec_buffer_limited.plugin
+      - plugins/static_fec/abc_rlc_buffer_limited.plugin
       - plugins/loss_monitor/loss_monitor.plugin
       - plugins/no_pacing/pacing_with_event.plugin
     additional_params:
       use_fec_api: "1"
       set_cc_algo: "bbr"
-  simple_fec_buffer_limited_bbr:
-    name: SIMPLE_FEC_BUFFER_LIMITED_BBR
-    plugins:
-      - plugins/simple_fec/fec_buffer_limited.plugin
-      - plugins/loss_monitor/loss_monitor.plugin
-      - plugins/no_pacing/pacing_with_event.plugin
-    additional_params:
-      use_fec_api: "1"
-      set_cc_algo: "bbr"
+      apply_malus_on_rwin: "1"
   bbr:
     name: BBR
     plugins: []
@@ -41,10 +33,10 @@ definitions:
         type: float
         units: Mbps
       loss_rate_to_client:
-        range: [2,2]
+        range: [0.5,0.5]
         type: float
       loss_rate_to_server:
-        range: [2,2]
+        range: [0.5,0.5]
         type: float
       seed:
         range: [5, 10000]
@@ -54,12 +46,11 @@ definitions:
         type: int
     variants:
       stream_receive_window_size:
-        - 150000
+        - 6_000_000
       filesize:
         - 5_000_000
       plugins:
-        - static_fec_buffer_limited_bbr
-        # - simple_fec_buffer_limited_bbr
+        - abc_rlc_buffer_limited_bbr
         - bbr
 
     sim_timeout: 600

@@ -1,0 +1,72 @@
+binaries:
+  rwin-limited-download: 'rwin-limited-download/bin/rwin-limited-download'
+
+
+plugins:
+  abc_rlc_bulk_bbr:
+    name: ABC_RLC_BULK_BBR
+    plugins:
+      - plugins/static_fec/abc_rlc_bulk.plugin
+      - plugins/loss_monitor/loss_monitor.plugin
+      - plugins/no_pacing/pacing_with_event.plugin
+    additional_params:
+      use_fec_api: "1"
+      set_cc_algo: "bbr"
+  flec_bulk_bbr:
+    name: FLEC_BULK_BBR
+    plugins:
+      - plugins/simple_fec/fec_bulk.plugin
+      - plugins/loss_monitor/loss_monitor.plugin
+      - plugins/no_pacing/pacing_with_event.plugin
+    additional_params:
+      use_fec_api: "1"
+      set_cc_algo: "bbr"
+  bbr:
+    name: BBR
+    plugins: []
+    additional_params:
+      use_fec_api: "0"
+      set_cc_algo: "bbr"
+
+
+definitions:
+  rwin-limited-download:
+    params:
+      delay:
+        range: [5, 100]
+        type: float
+        units: ms
+      bandwidth:
+        range: [1, 30]
+        type: float
+        units: Mbps
+      loss_rate_to_client:
+        range: [0.1,8]
+        type: float
+      loss_rate_to_server:
+        range: [0.1,8]
+        type: float
+      stream_receive_window_size:
+        range: [1000000000, 1000000000]
+        type: int
+      seed:
+        range: [5, 10000]
+        type: int
+      wifi_distance_meters:
+        range: [1, 20]
+        type: int
+    variants:
+      filesize:
+        - 10_000
+        - 40_000
+        - 100_000
+        - 1_000_000
+        - 10_000_000
+
+      plugins:
+        - abc_rlc_bulk_bbr
+        - flec_bulk_bbr
+        - bbr
+
+    sim_timeout: 600
+    hard_timeout: 60

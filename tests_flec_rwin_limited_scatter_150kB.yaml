@@ -42,6 +42,7 @@ plugins:
     additional_params:
       use_fec_api: "1"
       set_cc_algo: "bbr"
+      apply_malus_on_rwin: "1"
   simple_fec_causal_bbr_80211n_2dot4GHz:
     name: SIMPLE_FEC_CAUSAL_BBR_80211N_2DOT4GHz
     plugins:
@@ -162,4 +163,4 @@ definitions:
         - simple_fec_causal_bbr
         - bbr
     sim_timeout: 600
-    hard_timeout: 1200
+    hard_timeout: 60
