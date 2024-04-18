@@ -1,3 +1,7 @@
+# ABC simulation experiments
+
+This repository contains the environment to run ABC inside NS3-DCE and reproduce its results.
+
 # FlEC simulation experiments
 
 This repository contains the environment to run FlEC inside NS3-DCE and reproduce its results.
