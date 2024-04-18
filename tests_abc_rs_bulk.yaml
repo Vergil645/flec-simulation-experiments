@@ -4,7 +4,7 @@ binaries:
 
 plugins:
   abc_rs_bulk_bbr:
-    name: ABC_RLC_BULK_BBR
+    name: ABC_RS_BULK_BBR
     plugins:
       - plugins/abc/abc_rs_bulk.plugin
       - plugins/loss_monitor/loss_monitor.plugin
