@@ -6,7 +6,7 @@ plugins:
   abc_rs_bulk_bbr:
     name: ABC_RLC_BULK_BBR
     plugins:
-      - plugins/static_fec/abc_rs_bulk.plugin
+      - plugins/abc/abc_rs_bulk.plugin
       - plugins/loss_monitor/loss_monitor.plugin
       - plugins/no_pacing/pacing_with_event.plugin
     additional_params:

@@ -6,7 +6,7 @@ plugins:
   abc_rlc_buffer_limited_bbr:
     name: ABC_RLC_BUFFER_LIMITED_BBR
     plugins:
-      - plugins/static_fec/abc_rlc_buffer_limited.plugin
+      - plugins/abc/abc_rlc_buffer_limited.plugin
       - plugins/loss_monitor/loss_monitor.plugin
       - plugins/no_pacing/pacing_with_event.plugin
     additional_params:
