@@ -13,6 +13,16 @@ fi
 # docker build -t pquic-ns3-dce -f Dockerfile-20.04 .
 # docker build -t flec-matplotlib -f Dockerfile-matplotlib .
 
+# ===== DIRECTORIES PREPARING =====
+
+rm results/*.json
+
+for directory in results_db \
+                 results_plots ; do
+    if [ -d ${directory} ]; then
+        rm ${directory}/*
+    fi
+done
 
 # ================
 # ===== FlEC =====
@@ -43,11 +53,14 @@ fi
 # python3 reproduce_experiments.py $1 --verbose --only abc_rlc_rwin_limited_experimental_design
 # python3 reproduce_experiments.py $1 --verbose --only abc_rlc_rwin_limited_experimental_design_bursty
 
+# python3 reproduce_experiments.py $1 --verbose --only abc_rlc_messages_experimental_design
+python3 reproduce_experiments.py $1 --verbose --only abc_rlc_messages_loss_1
+
 # =================================
 # ===== ABC with Reed-Solomon =====
 # =================================
 
-python3 reproduce_experiments.py $1 --verbose --only abc_rs_bulk
+# python3 reproduce_experiments.py $1 --verbose --only abc_rs_bulk
 
 # python3 reproduce_experiments.py $1 --verbose --only abc_rs_rwin_limited_loss_05
 # python3 reproduce_experiments.py $1 --verbose --only abc_rs_rwin_limited_loss_2
@@ -56,6 +69,8 @@ python3 reproduce_experiments.py $1 --verbose --only abc_rs_bulk
 # python3 reproduce_experiments.py $1 --verbose --only abc_rs_rwin_limited_experimental_design
 # python3 reproduce_experiments.py $1 --verbose --only abc_rs_rwin_limited_experimental_design_bursty
 
+# python3 reproduce_experiments.py $1 --verbose --only abc_rs_messages_experimental_design
+# python3 reproduce_experiments.py $1 --verbose --only abc_rs_messages_loss_1
 
 # ===== PLOTTING =====
 

@@ -46,10 +46,19 @@ experiments = {
         "abc_rs_rwin_limited_experimental_design",
         "abc_rs_rwin_limited_experimental_design_bursty",
     ],
+
     "video-with-losses": [
         # ===== FlEC ====
         "flec_messages_experimental_design",
-        "flec_messages_loss_1"
+        "flec_messages_loss_1",
+
+        # ===== ABC with RLC =====
+        "abc_rlc_messages_experimental_design",
+        "abc_rlc_messages_loss_1",
+
+        # ===== ABC with Reed-Solomon =====
+        "abc_rs_messages_experimental_design",
+        "abc_rs_messages_loss_1",
     ]
 }
 

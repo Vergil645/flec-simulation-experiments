@@ -85,8 +85,6 @@ if [ -f "results_db/flec_messages_loss_1.db" ] && [ -f "results_db/flec_messages
 	python3 plot_results.py --namefirsttest simple_fec_message_bbr,simple_fec_message_bbr_without_api --namesecondtest bbr,bbr -f results_db/flec_messages_loss_1.db,results_db/flec_messages_loss_1.db --filesize 5000000 -m uni --metric message_long_deliveries_pct --labelfirsttest "FlEC" --labelsecondtest QUIC --transform ratio --xlabel "one-way delay (ms)" --ylabel '$\frac{\#msg_{FlEC}}{\#msg_{QUIC}}$' --ylim 0.9,1.1 --ylog --yticks "0.9,1,1.1=0.9,,1.1" --xticks 5,25,50,75,100,125,150,175,200 --title '$bw$ = 8Mbps, $loss$ = 1\%, $deadline$ = 250ms' --labelfirsttest "FlEC" --labelsecondtest "QUIC" --legends '$FlEC_{API}$,$FlEC_{NO-API}$' -t results_plots/flec_messages_loss_1_long_deliveries_pct_with_and_without_api.pdf
 fi
 
-
-
 # bbr experimental design
 if [ -f "results_db/flec_messages_experimental_design.db" ]; then
 	python3 plot_results.py --namefirsttest simple_fec_message_bbr --namesecondtest bbr --transform ratio -m CDF -f results_db/flec_messages_experimental_design.db --metric message_long_deliveries_pct,server_bytes_sent --filesize 5000000,0,0,0 --xlabel "ratio" --labelfirsttest "FlEC" --labelsecondtest "QUIC" --ylabel "CDF" --xlim 0.5,2 --ylim 0,1 --xticks "0.5,0.75,1,1.33,2=0.5,0.75,1,1.33,2" --log --title '$RTT \in [10, 400]ms$, $bw \in [0.8, 30]Mbps$, $loss \in [0.1, 3]\%$' -t results_plots/flec_messages_experimental_design.pdf --legends '$\frac{\#msg_{FlEC}}{\#msg_{QUIC}}$,$\frac{bytes_{FlEC}}{bytes_{QUIC}}$'
@@ -167,6 +165,43 @@ if [ -f "results_db/abc_rlc_rwin_limited_scatter_6MB.db" ]; then
 	python3 plot_results_bytes_time_tradeoff.py --namefirsttest abc_rlc_buffer_limited_bbr --namesecondtest bbr -f results_db/abc_rlc_rwin_limited_scatter_6MB.db --metric time --uni-x-metric server_bytes_sent_abc_rlc_buffer_limited_bbr,server_bytes_sent_bbr --filesize 5000000 --xlabel "bytes overhead" --ylabel "DCT (ms)" --title "RTT = 400ms, BW = 8Mbps, loss = 0.5\%, rwin=6MB" --rwin-size 6000000 --labelfirsttest ABC --labelsecondtest QUIC --normalize-bytes-sent -t results_plots/abc_rlc_rwin_limited_scatter_6MB.pdf --ylim 7000,8200 --yticks 7000,7500,8000
 fi
 
+# ===== messages
+
+# bbr bytes sent
+if [ -f "results_db/abc_rlc_messages_loss_1.db" ] && [ -f "results_db/abc_rlc_messages_loss_1.db" ]; then
+	python3 plot_results.py --namefirsttest abc_rlc_message_bbr,abc_rlc_message_bbr_without_api --namesecondtest bbr,bbr -f results_db/abc_rlc_messages_loss_1.db,results_db/abc_rlc_messages_loss_1.db --filesize 5000000 -m uni --metric server_bytes_sent --labelfirsttest "ABC" --labelsecondtest QUIC --transform ratio --xlabel "one-way delay (ms)" --ylabel 'byte sent $\frac{ABC}{QUIC}$' --ylim 0.33,3 --ylog --yticks "0.33,0.5,0.9,1,1.1,2,3=0.33,0.5,0.9,,1.1,2,3" --xticks 5,25,50,75,100,125,150,175,200 --title '$bw$ = 8Mbps, $loss$ = 1\%, $deadline$ = 250ms' --labelfirsttest "ABC" --labelsecondtest "QUIC" --legends '$ABC_{API}$,$ABC_{NO-API}$' -t results_plots/abc_rlc_messages_loss_1_bytes_sent_with_and_without_api.pdf
+fi
+
+# bbr 95pct
+if [ -f "results_db/abc_rlc_messages_loss_1.db" ]; then
+	python3 plot_results.py --namefirsttest abc_rlc_message_bbr --namesecondtest bbr -f results_db/abc_rlc_messages_loss_1.db --filesize 5000000 -m uni --metric message_95_pct_delivery_delay --labelfirsttest "ABC" --labelsecondtest QUIC --transform none --xlabel "one-way delay (ms)" --ylabel 'delivery time $95^{th} percentile$' --ylim 0,1000000 --yticks 50000,150000,250000,500000=50,150,250,500 --xticks 50,75,100,125,150,175,200 --title '$bw$ = 8Mbps, $loss$ = 1\%, $deadline$ = 250ms' --labelfirsttest "ABC" --labelsecondtest "QUIC" -t results_plots/abc_rlc_messages_loss_1_95_pct.pdf
+fi
+
+# bbr 97pct
+if [ -f "results_db/abc_rlc_messages_loss_1.db" ]; then
+	python3 plot_results.py --namefirsttest abc_rlc_message_bbr --namesecondtest bbr -f results_db/abc_rlc_messages_loss_1.db --filesize 5000000 -m uni --metric message_97_pct_delivery_delay --labelfirsttest "ABC" --labelsecondtest QUIC --transform none --xlabel "one-way delay (ms)" --ylabel 'delivery time $97^{th} percentile$' --ylim 0,1000000 --yticks 50000,150000,250000,500000=50,150,250,500 --xticks 50,75,100,125,150,175,200 --title '$bw$ = 8Mbps, $loss$ = 1\%, $deadline$ = 250ms' --labelfirsttest "ABC" --labelsecondtest "QUIC" -t results_plots/abc_rlc_messages_loss_1_97_pct.pdf
+fi
+
+# bbr 98pct
+if [ -f "results_db/abc_rlc_messages_loss_1.db" ]; then
+	python3 plot_results.py --namefirsttest abc_rlc_message_bbr --namesecondtest bbr -f results_db/abc_rlc_messages_loss_1.db --filesize 5000000 -m uni --metric message_98_pct_delivery_delay --labelfirsttest "ABC" --labelsecondtest QUIC --transform none --xlabel "one-way delay (ms)" --ylabel 'delivery time $98^{th} percentile$' --ylim 0,1000000 --yticks 50000,150000,250000,500000=50,150,250,500 --xticks 50,75,100,125,150,175,200 --title '$bw$ = 8Mbps, $loss$ = 1\%, $deadline$ = 250ms' --labelfirsttest "ABC" --labelsecondtest "QUIC" -t results_plots/abc_rlc_messages_loss_1_98_pct.pdf
+fi
+
+# bbr 99pct
+if [ -f "results_db/abc_rlc_messages_loss_1.db" ]; then
+	python3 plot_results.py --namefirsttest abc_rlc_message_bbr --namesecondtest bbr -f results_db/abc_rlc_messages_loss_1.db --filesize 5000000 -m uni --metric message_99_pct_delivery_delay --labelfirsttest "ABC" --labelsecondtest QUIC --transform none --xlabel "one-way delay (ms)" --ylabel 'delivery time $99^{th} percentile$' --ylim 0,1000000 --yticks 50000,150000,250000,500000=50,150,250,500 --xticks 50,75,100,125,150,175,200 --title '$bw$ = 8Mbps, $loss$ = 1\%, $deadline$ = 250ms' --labelfirsttest "ABC" --labelsecondtest "QUIC" -t results_plots/abc_rlc_messages_loss_1_99_pct.pdf
+fi
+
+# bbr long deliveries pct
+if [ -f "results_db/abc_rlc_messages_loss_1.db" ] && [ -f "results_db/abc_rlc_messages_loss_1.db" ]; then
+	python3 plot_results.py --namefirsttest abc_rlc_message_bbr,abc_rlc_message_bbr_without_api --namesecondtest bbr,bbr -f results_db/abc_rlc_messages_loss_1.db,results_db/abc_rlc_messages_loss_1.db --filesize 5000000 -m uni --metric message_long_deliveries_pct --labelfirsttest "ABC" --labelsecondtest QUIC --transform ratio --xlabel "one-way delay (ms)" --ylabel '$\frac{\#msg_{ABC}}{\#msg_{QUIC}}$' --ylim 0.9,1.1 --ylog --yticks "0.9,1,1.1=0.9,,1.1" --xticks 5,25,50,75,100,125,150,175,200 --title '$bw$ = 8Mbps, $loss$ = 1\%, $deadline$ = 250ms' --labelfirsttest "ABC" --labelsecondtest "QUIC" --legends '$ABC_{API}$,$ABC_{NO-API}$' -t results_plots/abc_rlc_messages_loss_1_long_deliveries_pct_with_and_without_api.pdf
+fi
+
+# bbr experimental design
+if [ -f "results_db/abc_rlc_messages_experimental_design.db" ]; then
+	python3 plot_results.py --namefirsttest abc_rlc_message_bbr --namesecondtest bbr --transform ratio -m CDF -f results_db/abc_rlc_messages_experimental_design.db --metric message_long_deliveries_pct,server_bytes_sent --filesize 5000000,0,0,0 --xlabel "ratio" --labelfirsttest "ABC" --labelsecondtest "QUIC" --ylabel "CDF" --xlim 0.5,2 --ylim 0,1 --xticks "0.5,0.75,1,1.33,2=0.5,0.75,1,1.33,2" --log --title '$RTT \in [10, 400]ms$, $bw \in [0.8, 30]Mbps$, $loss \in [0.1, 3]\%$' -t results_plots/abc_rlc_messages_experimental_design.pdf --legends '$\frac{\#msg_{ABC}}{\#msg_{QUIC}}$,$\frac{bytes_{ABC}}{bytes_{QUIC}}$'
+fi
+
 
 # =================================
 # ===== ABC with Reed-Solomon =====
@@ -240,4 +275,41 @@ fi
 # BYTES TIME TRADEOFF 6MB: abc_rs_buffer_limited_bbr
 if [ -f "results_db/abc_rs_rwin_limited_scatter_6MB.db" ]; then
 	python3 plot_results_bytes_time_tradeoff.py --namefirsttest abc_rs_buffer_limited_bbr --namesecondtest bbr -f results_db/abc_rs_rwin_limited_scatter_6MB.db --metric time --uni-x-metric server_bytes_sent_abc_rs_buffer_limited_bbr,server_bytes_sent_bbr --filesize 5000000 --xlabel "bytes overhead" --ylabel "DCT (ms)" --title "RTT = 400ms, BW = 8Mbps, loss = 0.5\%, rwin=6MB" --rwin-size 6000000 --labelfirsttest ABC --labelsecondtest QUIC --normalize-bytes-sent -t results_plots/abc_rs_rwin_limited_scatter_6MB.pdf --ylim 7000,8200 --yticks 7000,7500,8000
+fi
+
+# ===== messages
+
+# bbr bytes sent
+if [ -f "results_db/abc_rs_messages_loss_1.db" ] && [ -f "results_db/abc_rs_messages_loss_1.db" ]; then
+	python3 plot_results.py --namefirsttest abc_rs_message_bbr,bbr,abc_rs_message_bbr_without_api --namesecondtest bbr,bbr -f results_db/abc_rs_messages_loss_1.db,results_db/abc_rs_messages_loss_1.db --filesize 5000000 -m uni --metric server_bytes_sent --labelfirsttest "ABC" --labelsecondtest QUIC --transform ratio --xlabel "one-way delay (ms)" --ylabel 'byte sent $\frac{ABC}{QUIC}$' --ylim 0.33,3 --ylog --yticks "0.33,0.5,0.9,1,1.1,2,3=0.33,0.5,0.9,,1.1,2,3" --xticks 5,25,50,75,100,125,150,175,200 --title '$bw$ = 8Mbps, $loss$ = 1\%, $deadline$ = 250ms' --labelfirsttest "ABC" --labelsecondtest "QUIC" --legends '$ABC_{API}$,$ABC_{NO-API}$' -t results_plots/abc_rs_messages_loss_1_bytes_sent_with_and_without_api.pdf
+fi
+
+# bbr 95pct
+if [ -f "results_db/abc_rs_messages_loss_1.db" ]; then
+	python3 plot_results.py --namefirsttest abc_rs_message_bbr --namesecondtest bbr -f results_db/abc_rs_messages_loss_1.db --filesize 5000000 -m uni --metric message_95_pct_delivery_delay --labelfirsttest "ABC" --labelsecondtest QUIC --transform none --xlabel "one-way delay (ms)" --ylabel 'delivery time $95^{th} percentile$' --ylim 0,1000000 --yticks 50000,150000,250000,500000=50,150,250,500 --xticks 50,75,100,125,150,175,200 --title '$bw$ = 8Mbps, $loss$ = 1\%, $deadline$ = 250ms' --labelfirsttest "ABC" --labelsecondtest "QUIC" -t results_plots/abc_rs_messages_loss_1_95_pct.pdf
+fi
+
+# bbr 97pct
+if [ -f "results_db/abc_rs_messages_loss_1.db" ]; then
+	python3 plot_results.py --namefirsttest abc_rs_message_bbr --namesecondtest bbr -f results_db/abc_rs_messages_loss_1.db --filesize 5000000 -m uni --metric message_97_pct_delivery_delay --labelfirsttest "ABC" --labelsecondtest QUIC --transform none --xlabel "one-way delay (ms)" --ylabel 'delivery time $97^{th} percentile$' --ylim 0,1000000 --yticks 50000,150000,250000,500000=50,150,250,500 --xticks 50,75,100,125,150,175,200 --title '$bw$ = 8Mbps, $loss$ = 1\%, $deadline$ = 250ms' --labelfirsttest "ABC" --labelsecondtest "QUIC" -t results_plots/abc_rs_messages_loss_1_97_pct.pdf
+fi
+
+# bbr 98pct
+if [ -f "results_db/abc_rs_messages_loss_1.db" ]; then
+	python3 plot_results.py --namefirsttest abc_rs_message_bbr --namesecondtest bbr -f results_db/abc_rs_messages_loss_1.db --filesize 5000000 -m uni --metric message_98_pct_delivery_delay --labelfirsttest "ABC" --labelsecondtest QUIC --transform none --xlabel "one-way delay (ms)" --ylabel 'delivery time $98^{th} percentile$' --ylim 0,1000000 --yticks 50000,150000,250000,500000=50,150,250,500 --xticks 50,75,100,125,150,175,200 --title '$bw$ = 8Mbps, $loss$ = 1\%, $deadline$ = 250ms' --labelfirsttest "ABC" --labelsecondtest "QUIC" -t results_plots/abc_rs_messages_loss_1_98_pct.pdf
+fi
+
+# bbr 99pct
+if [ -f "results_db/abc_rs_messages_loss_1.db" ]; then
+	python3 plot_results.py --namefirsttest abc_rs_message_bbr --namesecondtest bbr -f results_db/abc_rs_messages_loss_1.db --filesize 5000000 -m uni --metric message_99_pct_delivery_delay --labelfirsttest "ABC" --labelsecondtest QUIC --transform none --xlabel "one-way delay (ms)" --ylabel 'delivery time $99^{th} percentile$' --ylim 0,1000000 --yticks 50000,150000,250000,500000=50,150,250,500 --xticks 50,75,100,125,150,175,200 --title '$bw$ = 8Mbps, $loss$ = 1\%, $deadline$ = 250ms' --labelfirsttest "ABC" --labelsecondtest "QUIC" -t results_plots/abc_rs_messages_loss_1_99_pct.pdf
+fi
+
+# bbr long deliveries pct
+if [ -f "results_db/abc_rs_messages_loss_1.db" ] && [ -f "results_db/abc_rs_messages_loss_1.db" ]; then
+	python3 plot_results.py --namefirsttest abc_rs_message_bbr,bbr,abc_rs_message_bbr_without_api --namesecondtest bbr,bbr -f results_db/abc_rs_messages_loss_1.db,results_db/abc_rs_messages_loss_1.db --filesize 5000000 -m uni --metric message_long_deliveries_pct --labelfirsttest "ABC" --labelsecondtest QUIC --transform ratio --xlabel "one-way delay (ms)" --ylabel '$\frac{\#msg_{ABC}}{\#msg_{QUIC}}$' --ylim 0.9,1.1 --ylog --yticks "0.9,1,1.1=0.9,,1.1" --xticks 5,25,50,75,100,125,150,175,200 --title '$bw$ = 8Mbps, $loss$ = 1\%, $deadline$ = 250ms' --labelfirsttest "ABC" --labelsecondtest "QUIC" --legends '$ABC_{API}$,$ABC_{NO-API}$' -t results_plots/abc_rs_messages_loss_1_long_deliveries_pct_with_and_without_api.pdf
+fi
+
+# bbr experimental design
+if [ -f "results_db/abc_rs_messages_experimental_design.db" ]; then
+	python3 plot_results.py --namefirsttest abc_rs_message_bbr --namesecondtest bbr --transform ratio -m CDF -f results_db/abc_rs_messages_experimental_design.db --metric message_long_deliveries_pct,server_bytes_sent --filesize 5000000,0,0,0 --xlabel "ratio" --labelfirsttest "ABC" --labelsecondtest "QUIC" --ylabel "CDF" --xlim 0.5,2 --ylim 0,1 --xticks "0.5,0.75,1,1.33,2=0.5,0.75,1,1.33,2" --log --title '$RTT \in [10, 400]ms$, $bw \in [0.8, 30]Mbps$, $loss \in [0.1, 3]\%$' -t results_plots/abc_rs_messages_experimental_design.pdf --legends '$\frac{\#msg_{ABC}}{\#msg_{QUIC}}$,$\frac{bytes_{ABC}}{bytes_{QUIC}}$'
 fi

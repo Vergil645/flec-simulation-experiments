@@ -1,0 +1,67 @@
+binaries:
+  video-with-losses: 'video-with-losses/bin/video-with-losses'
+
+plugins:
+  abc_rs_message_bbr:
+    name: ABC_RS_MESSAGE_BBR
+    plugins:
+      - plugins/abc/abc_rs_real_time_messages.plugin
+      - plugins/loss_monitor/loss_monitor.plugin
+      - plugins/no_pacing/pacing_with_event.plugin
+    additional_params:
+      use_fec_api: "1"
+      set_cc_algo: "bbr"
+  bbr:
+    name: BBR
+    plugins: []
+    additional_params:
+      use_fec_api: "0"
+      set_cc_algo: "bbr"
+  abc_rs_message_bbr_without_api:
+    name: ABC_RS_MESSAGE_BBR_WITHOUT_API
+    plugins:
+      - plugins/abc/abc_rs_real_time_messages.plugin
+      - plugins/loss_monitor/loss_monitor.plugin
+      - plugins/no_pacing/pacing_with_event.plugin
+    additional_params:
+      use_fec_api: "0"
+      set_cc_algo: "bbr"
+
+definitions:
+  video-with-losses:
+    params:
+      delay:
+        # univariate on delay
+        range: [50, 200]
+        type: float
+        units: ms
+      bandwidth:
+        range: [8, 8]
+        type: float
+        units: Mbps
+      filesize:
+        range: [5_000_000, 5_000_000]
+        type: int
+      loss_rate_to_client:
+        range: [1,1]
+        type: float
+      loss_rate_to_server:
+        range: [1,1]
+        type: float
+      videofile:
+        # TODO: real use of this range (with string values)
+        range: [0, 0]
+        type: int
+      seed:
+        range: [5, 10000]
+        type: int
+      wifi_distance_meters:
+        range: [1, 20]
+        type: int
+    variants:
+      plugins:
+        - abc_rs_message_bbr
+        - bbr
+        - abc_rs_message_bbr_without_api
+    sim_timeout: 600
+    hard_timeout: 240

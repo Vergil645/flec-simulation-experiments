@@ -230,8 +230,10 @@ for i, (filename, filename2, filename3, METHOD_1, METHOD_2, METHOD_3) in enumera
             plt.plot(x, y, color="darkblue" if color is None else color, linewidth=0.25, marker=marker, linestyle="-" if linestyle is None else linestyle,
                      markeredgewidth=mew, ms=markersize, label=label)
 
-
-    plt.rcParams["toolbar"] = "toolmanager"
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        plt.rcParams["toolbar"] = "toolmanager"
     plt.tight_layout()
 
     plt.grid(True)

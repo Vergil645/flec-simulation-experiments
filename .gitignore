@@ -8,7 +8,8 @@ jail/*
 .vscode
 
 reproduce_logs
-result_plots.dir
-results_db.dir
-results_db
+results_plots
 results_plots_*
+results_plots.dir
+results_db
+results_db.dir

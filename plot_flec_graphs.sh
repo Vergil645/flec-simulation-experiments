@@ -86,6 +86,13 @@ for test in abc_rlc_rwin_limited_loss_05 \
     make_db ${TESTSUITE} ${TESTNAMES} ${test}
 done
 
+TESTSUITE="video-with-losses"
+TESTNAMES="abc_rlc_message_bbr,bbr,abc_rlc_message_bbr_without_api"
+for test in abc_rlc_messages_experimental_design \
+            abc_rlc_messages_loss_1 ; do
+    make_db ${TESTSUITE} ${TESTNAMES} ${test}
+done
+
 # =================================
 # ===== ABC with Reed-Solomon =====
 # =================================
@@ -104,6 +111,13 @@ for test in abc_rs_rwin_limited_loss_05 \
             abc_rs_rwin_limited_scatter_6MB \
             abc_rs_rwin_limited_experimental_design \
             abc_rs_rwin_limited_experimental_design_bursty ; do
+    make_db ${TESTSUITE} ${TESTNAMES} ${test}
+done
+
+TESTSUITE="video-with-losses"
+TESTNAMES="abc_rs_message_bbr,bbr,abc_rs_message_bbr_without_api"
+for test in abc_rs_messages_experimental_design \
+            abc_rs_messages_loss_1 ; do
     make_db ${TESTSUITE} ${TESTNAMES} ${test}
 done
 
